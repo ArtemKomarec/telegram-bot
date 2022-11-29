@@ -1,6 +1,7 @@
 const rootIndex = require("..");
 const CoinMarketCapService = require("../services/coin-market-cap");
 const randomJoke = require("../services/joke");
+const randomMeme = require("../services/memes");
 const fundBalance = require("../services/dropstab");
 const printFund = require("../utils");
 const news = require("../services/news");
@@ -11,8 +12,17 @@ const convertCurrencyHandler = async (msg, match) => {
 		match.groups.curr
 	);
 	const convertedPrice = price * Number(match.groups.value);
-	console.log(convertedPrice);
-	rootIndex.bot.sendMessage(chatId, `${convertedPrice.toFixed(2)}\uD83D\uDCB5`);
+	if (convertedPrice) {
+		rootIndex.bot.sendMessage(
+			chatId,
+			`${convertedPrice.toFixed(2)}\uD83D\uDCB5`
+		);
+	} else {
+		rootIndex.bot.sendMessage(
+			chatId,
+			`Неправильный формат сообщения. Пример: /convert 0.05 btc`
+		);
+	}
 };
 
 module.exports.convertCurrencyHandler = convertCurrencyHandler;
@@ -22,6 +32,14 @@ const getJokeHandler = async (msg) => {
 	const joke = await randomJoke.getRandomJoke();
 	rootIndex.bot.sendMessage(chatId, joke + "\n");
 };
+
+const getMemeHandler = async (msg) => {
+	const chatId = msg.chat.id;
+	const meme = await randomMeme.getRandomMeme();
+	rootIndex.bot.sendPhoto(chatId, meme);
+};
+
+module.exports.getMemeHandler = getMemeHandler;
 
 module.exports.getJokeHandler = getJokeHandler;
 

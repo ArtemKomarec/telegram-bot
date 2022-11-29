@@ -1,5 +1,5 @@
-const axios = require('axios');
-const constants = require('../constants');
+const axios = require("axios");
+const constants = require("../constants");
 const getDropsTabBalance = async () => {
   const res = await axios.get(constants.DROPS_TAB_BALANCE);
   const currenciesList = res.data.portfolios.map(currency => {

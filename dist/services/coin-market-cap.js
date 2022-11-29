@@ -9,7 +9,7 @@ const getExchangeRatesBySlugs = async currencySlugs => {
   const rates = Object.values(res.data).map(rate => {
     let tokenPrice = Number(rate.quote.USD.price).toFixed(3);
     tokenPrice = String(tokenPrice) + " " + "Usdt";
-    let blockhain = '';
+    let blockhain = "";
     if (rate.platform) {
       blockhain = rate.platform.name;
     } else {
@@ -50,7 +50,7 @@ const getExchangeRateBySlug = async slug => {
   const res = await client.getQuotes({
     symbol: currencySlug
   });
-  const price = res.data[currencySlug].quote.USD.price.toFixed(3);
+  const price = Number(res.data[currencySlug].quote.USD.price).toFixed(3);
   return price;
 };
 module.exports.getExchangeRateBySlug = getExchangeRateBySlug;
