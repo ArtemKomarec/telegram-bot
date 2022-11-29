@@ -1,0 +1,35 @@
+{
+	"name": "bot",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "npm run build && node ./dist/index.js",
+		"dev": "nodemon --exec babel-node ./index.js",
+		"build": "npm run clean && npm run build-babel",
+		"clean": "rm -rf dist && mkdir dist",
+		"build-babel": "babel -d ./dist ./src -s --ignore node_modules"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"nodemon": "^2.0.20"
+	},
+	"dependencies": {
+		"@babel/cli": "^7.19.3",
+		"@babel/core": "^7.19.3",
+		"@babel/node": "^7.19.1",
+		"@babel/polyfill": "^7.12.1",
+		"@babel/preset-env": "^7.19.4",
+		"@babel/runtime": "^7.19.4",
+		"axios": "^1.1.3",
+		"coinmarketcap-api": "^3.1.1",
+		"dotenv": "^16.0.3",
+		"express": "^4.18.2",
+		"jsdom": "^20.0.3",
+		"node-cron": "^3.0.2",
+		"node-telegram-bot-api": "^0.60.0",
+		"table": "^6.8.1"
+	}
+}
