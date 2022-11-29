@@ -10,7 +10,7 @@ const convertCurrencyHandler = async (msg, match) => {
 	const price = await CoinMarketCapService.getExchangeRateBySlug(
 		match.groups.curr
 	);
-	const convertedPrice = price * match.groups.value;
+	const convertedPrice = price * Number(match.groups.value);
 	console.log(convertedPrice.toFixed(2));
 	rootIndex.bot.sendMessage(chatId, `${convertedPrice}\uD83D\uDCB5`);
 };
