@@ -12,7 +12,7 @@ const getRandomJoke = async () => {
 	const jokesList = document.querySelectorAll(".topicbox[data-id] div.text");
 
 	const randomJokeIndex = Math.floor(Math.random() * jokesList.length - 1);
-	console.log(jokesList[randomJokeIndex].innerHTML);
+	console.log(jokesList[randomJokeIndex]);
 
 	if (jokesList[randomJokeIndex]) {
 		return jokesList[randomJokeIndex].innerHTML;
