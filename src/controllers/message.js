@@ -5,6 +5,7 @@ const randomMeme = require("../services/memes");
 const fundBalance = require("../services/dropstab");
 const printFund = require("../utils");
 const news = require("../services/news");
+const activities = require("../services/drops");
 
 const convertCurrencyHandler = async (msg, match) => {
 	const chatId = msg.chat.id;
@@ -53,6 +54,25 @@ const getDropsTabProfileHandler = async (msg) => {
 };
 
 module.exports.getDropsTabProfileHandler = getDropsTabProfileHandler;
+
+const getAllAirdrops = async (msg) => {
+	const chatId = msg.chat.id;
+	const activitiesList = await activities.getActivities();
+	console.log(activitiesList);
+	let responseText = "";
+	activitiesList.map((activity) => {
+		responseText += `
+<b>${activity.activityName}</b>
+${activity.description}
+Ссылка на статью - ${activity.link}
+		`;
+	});
+	rootIndex.bot.sendMessage(chatId, responseText, {
+		parse_mode: "HTML",
+	});
+};
+
+module.exports.getAllAirdrops = getAllAirdrops;
 
 const getTopNews = async (msg) => {
 	const chatId = msg.chat.id;

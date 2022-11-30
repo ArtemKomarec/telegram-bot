@@ -42,6 +42,7 @@ bot.onText(/\/joke/, messageController.getJokeHandler);
 bot.onText(/\/fund/, messageController.getDropsTabProfileHandler);
 bot.onText(/\/news/, messageController.getTopNews);
 bot.onText(/\/meme/, messageController.getMemeHandler);
+bot.onText(/\/activities/, messageController.getAllAirdrops);
 
 bot.on("new_chat_members", messageController.newChatMember);
 bot.on("left_chat_member", messageController.leftChatMember);
