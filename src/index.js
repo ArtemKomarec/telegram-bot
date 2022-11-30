@@ -35,14 +35,19 @@ module.exports.bot = bot;
 let availableСurrencies = [];
 
 bot.onText(
-	/convert (?<value>.+) (?<curr>.+)/,
-	messageController.convertCurrencyHandler
+	/\/tousdt (?<value>.+) (?<curr>.+)/,
+	messageController.convertCurrencyToUsdt
+);
+bot.onText(
+	/\/tocoin(?<value>.+) (?<curr>.+)/,
+	messageController.convertUsdtToCurrency
 );
 bot.onText(/\/joke/, messageController.getJokeHandler);
 bot.onText(/\/fund/, messageController.getDropsTabProfileHandler);
 bot.onText(/\/news/, messageController.getTopNews);
 bot.onText(/\/meme/, messageController.getMemeHandler);
-bot.onText(/\/activities/, messageController.getAllAirdrops);
+bot.onText(/\/activities/, messageController.getAllActivities);
+bot.onText(/\/global/, messageController.getGlobalCurrInfo);
 
 bot.on("new_chat_members", messageController.newChatMember);
 bot.on("left_chat_member", messageController.leftChatMember);
@@ -54,5 +59,4 @@ app.listen(constants.PORT, async () => {
 	const data = await CoinMarketCapService.getAllSlugsRequest();
 	availableСurrencies = CoinMarketCapService.getAllSlugs();
 	exports.availableСurrencies = availableСurrencies;
-	console.log(availableСurrencies);
 });

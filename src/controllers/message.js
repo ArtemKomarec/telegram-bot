@@ -5,34 +5,15 @@ const randomMeme = require("../services/memes");
 const fundBalance = require("../services/dropstab");
 const printFund = require("../utils");
 const news = require("../services/news");
-const activities = require("../services/drops");
-
-const convertCurrencyHandler = async (msg, match) => {
-	const chatId = msg.chat.id;
-	const price = await CoinMarketCapService.getExchangeRateBySlug(
-		match.groups.curr
-	);
-	const convertedPrice = price * Number(match.groups.value);
-	if (convertedPrice) {
-		rootIndex.bot.sendMessage(
-			chatId,
-			`${convertedPrice.toFixed(2)}\uD83D\uDCB5`
-		);
-	} else {
-		rootIndex.bot.sendMessage(
-			chatId,
-			`Неправильный формат сообщения. Пример: /convert 0.05 btc`
-		);
-	}
-};
-
-module.exports.convertCurrencyHandler = convertCurrencyHandler;
+const activities = require("../services/activities");
 
 const getJokeHandler = async (msg) => {
 	const chatId = msg.chat.id;
 	const joke = await randomJoke.getRandomJoke();
-	rootIndex.bot.sendMessage(chatId, joke + "\n");
+	rootIndex.bot.sendMessage(chatId, joke.replace(/<br>|<br\/>/gi, "\n"));
 };
+
+module.exports.getJokeHandler = getJokeHandler;
 
 const getMemeHandler = async (msg) => {
 	const chatId = msg.chat.id;
@@ -41,8 +22,6 @@ const getMemeHandler = async (msg) => {
 };
 
 module.exports.getMemeHandler = getMemeHandler;
-
-module.exports.getJokeHandler = getJokeHandler;
 
 const getDropsTabProfileHandler = async (msg) => {
 	const chatId = msg.chat.id;
@@ -55,10 +34,9 @@ const getDropsTabProfileHandler = async (msg) => {
 
 module.exports.getDropsTabProfileHandler = getDropsTabProfileHandler;
 
-const getAllAirdrops = async (msg) => {
+const getAllActivities = async (msg) => {
 	const chatId = msg.chat.id;
 	const activitiesList = await activities.getActivities();
-	console.log(activitiesList);
 	let responseText = "";
 	activitiesList.map((activity) => {
 		responseText += `
@@ -72,7 +50,7 @@ ${activity.description}
 	});
 };
 
-module.exports.getAllAirdrops = getAllAirdrops;
+module.exports.getAllActivities = getAllActivities;
 
 const getTopNews = async (msg) => {
 	const chatId = msg.chat.id;
@@ -90,20 +68,80 @@ ${news.content}
 
 module.exports.getTopNews = getTopNews;
 
+const convertCurrencyToUsdt = async (msg, match) => {
+	const chatId = msg.chat.id;
+	const price = await CoinMarketCapService.getExchangeRateBySlug(
+		match.groups.curr
+	);
+	const convertedPrice = price * Number(match.groups.value);
+	if (convertedPrice) {
+		rootIndex.bot.sendMessage(
+			chatId,
+			`${convertedPrice.toFixed(2)}\uD83D\uDCB5`
+		);
+	} else {
+		rootIndex.bot.sendMessage(
+			chatId,
+			`Неправильный формат сообщения. Пример: /convertToUsdt 0.05 btc`
+		);
+	}
+};
+
+module.exports.convertCurrencyToUsdt = convertCurrencyToUsdt;
+
+const convertUsdtToCurrency = async (msg, match) => {
+	const chatId = msg.chat.id;
+	const currency = match.groups.curr;
+	const price = await CoinMarketCapService.getExchangeRateBySlug(currency);
+	const coinQuaintity = Number(match.groups.value) / price;
+
+	if (coinQuaintity) {
+		rootIndex.bot.sendMessage(
+			chatId,
+			`${coinQuaintity.toFixed(8) + " " + currency.toUpperCase()}`
+		);
+	} else {
+		rootIndex.bot.sendMessage(
+			chatId,
+			"Неправильный формат сообщения.\nПример: /convertToCoin 100(means usdt) btc(coin which you want)"
+		);
+	}
+};
+
+module.exports.convertUsdtToCurrency = convertUsdtToCurrency;
+
+const getGlobalCurrInfo = async (msg) => {
+	const chatId = msg.chat.id;
+	const marketinfo = await CoinMarketCapService.marketLatestQuotes();
+	rootIndex.bot.sendMessage(
+		chatId,
+		`
+Доминация битка: ${Number(marketinfo.btcDomination).toFixed(2)}%
+Доминация эфира: ${Number(marketinfo.ethDomination).toFixed(2)}%
+Общий объем рынка сегодня: ${Number(marketinfo.totalMarketCap).toFixed(2)}$
+Объем Defi сегодня: ${Number(marketinfo.defiCap).toFixed(2)}$
+Объем Стейблов сегодня: ${Number(marketinfo.stablesCap).toFixed(2)}$
+Объем маржинальной торговли сегодня: ${Number(
+			marketinfo.derivativesCap
+		).toFixed(2)}$
+	`
+	);
+};
+
+module.exports.getGlobalCurrInfo = getGlobalCurrInfo;
+
 const newMessageHandler = async (msg) => {
+	const works = true;
 	if (typeof msg.text !== "undefined") {
 		const messageText = msg.text.toUpperCase();
-		console.log(rootIndex.availableСurrencies);
 		if (
 			rootIndex.availableСurrencies?.find(({ slug }) => slug === messageText)
 		) {
-			console.log("a");
 			const rates = await CoinMarketCapService.getExchangeRatesBySlugs([
 				messageText,
 			]);
 
 			rates.forEach((rate) => {
-				console.log(rate.info);
 				const responseText = `
 Название: ${rate.currency}
 Цена: ${rate.value}
@@ -120,7 +158,6 @@ const newMessageHandler = async (msg) => {
 		) {
 			rootIndex.bot.sendMessage(msg.chat.id, "Сам пошел");
 		} else if (messageText === "Бля".toUpperCase()) {
-			console.log(msg.chat.id);
 			rootIndex.bot.sendMessage(msg.chat.id, "Не ругайся");
 		}
 	}

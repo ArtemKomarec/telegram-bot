@@ -55,7 +55,25 @@ const getExchangeRateBySlug = async (slug) => {
 	const client = new CoinMarketCap(constants.COIN_MARKET_CAP_API_KEY);
 	const currencySlug = slug.toUpperCase();
 	const res = await client.getQuotes({ symbol: currencySlug });
+	if (Object.keys(res.data).length === 0) {
+		return undefined;
+	}
 	const price = Number(res.data[currencySlug].quote.USD.price).toFixed(3);
 	return price;
 };
 module.exports.getExchangeRateBySlug = getExchangeRateBySlug;
+
+const marketLatestQuotes = async () => {
+	const client = new CoinMarketCap(constants.COIN_MARKET_CAP_API_KEY);
+	const res = await client.getGlobal();
+	return {
+		btcDomination: res.data.btc_dominance,
+		ethDomination: res.data.eth_dominance,
+		totalMarketCap: res.data.quote.USD.total_market_cap,
+		defiCap: res.data.defi_market_cap,
+		stablesCap: res.data.stablecoin_market_cap,
+		derivativesCap: res.data.derivatives_volume_24h,
+	};
+};
+
+module.exports.marketLatestQuotes = marketLatestQuotes;

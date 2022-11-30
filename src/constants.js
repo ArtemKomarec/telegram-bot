@@ -28,3 +28,6 @@ module.exports.FOGKLOG_NEWS = FOGKLOG_NEWS;
 
 const COIN_MARKET_CAP_API_KEY = "62f01a4f-c849-4699-89c4-5791c0ec1c24";
 module.exports.COIN_MARKET_CAP_API_KEY = COIN_MARKET_CAP_API_KEY;
+
+const BLOCK_TO_FI = "https://medium.com/@blockfito";
+module.exports.BLOCK_TO_FI = BLOCK_TO_FI;
