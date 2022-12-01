@@ -1,5 +1,4 @@
 const express = require("express");
-
 const constants = require("./constants");
 const CoinMarketCapService = require("./services/coin-market-cap");
 const TelegramBot = require("node-telegram-bot-api");
@@ -35,11 +34,11 @@ module.exports.bot = bot;
 let availableСurrencies = [];
 
 bot.onText(
-	/\/tousdt (?<value>.+) (?<curr>.+)/,
+	/\/to_usdt (?<value>.+) (?<curr>.+)/,
 	messageController.convertCurrencyToUsdt
 );
 bot.onText(
-	/\/tocoin(?<value>.+) (?<curr>.+)/,
+	/\/to_coin (?<value>.+) (?<curr>.+)/,
 	messageController.convertUsdtToCurrency
 );
 bot.onText(/\/joke/, messageController.getJokeHandler);
@@ -48,6 +47,7 @@ bot.onText(/\/news/, messageController.getTopNews);
 bot.onText(/\/meme/, messageController.getMemeHandler);
 bot.onText(/\/activities/, messageController.getAllActivities);
 bot.onText(/\/global/, messageController.getGlobalCurrInfo);
+bot.onText(/\/weather_today (.+)/, messageController.getWeatherByLocation);
 
 bot.on("new_chat_members", messageController.newChatMember);
 bot.on("left_chat_member", messageController.leftChatMember);

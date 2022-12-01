@@ -6,6 +6,7 @@ const fundBalance = require("../services/dropstab");
 const printFund = require("../utils");
 const news = require("../services/news");
 const activities = require("../services/activities");
+const weatherService = require("../services/weather");
 
 const getJokeHandler = async (msg) => {
 	const chatId = msg.chat.id;
@@ -187,3 +188,23 @@ const leftChatMember = (msg) => {
 };
 
 module.exports.leftChatMember = leftChatMember;
+
+const getWeatherByLocation = async (msg, match) => {
+	const chatId = msg.chat.id;
+	const location = match[1];
+	const res = await weatherService.getWeather(location);
+	rootIndex.bot.sendMessage(
+		chatId,
+		`
+Сегодня: <b>${res.today}</b>
+Описание: ${res.description}
+Ночью: от <b>${res.night.min}</b> до <b>${res.night.max}</b>
+Утром: от <b>${res.morning.min}</b> до <b>${res.morning.max}</b>
+Днем: от <b>${res.day.min}</b> до <b>${res.day.max}</b>
+Вечером: от <b>${res.evening.min}</b> до <b>${res.evening.max}</b>
+	`,
+		{ parse_mode: "HTML" }
+	);
+};
+
+module.exports.getWeatherByLocation = getWeatherByLocation;
