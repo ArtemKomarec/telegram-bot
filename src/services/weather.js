@@ -1,5 +1,8 @@
 const axios = require("axios");
 const constants = require("../constants");
+const translate = require("translate");
+
+translate.engine = "google";
 
 const getWeather = async (location) => {
 	const res = await axios.get(
@@ -26,9 +29,10 @@ const getWeather = async (location) => {
 	morning = getTemperatureValue(morning);
 	day = getTemperatureValue(day);
 	evening = getTemperatureValue(evening);
+	const description = await translate(weatherInfo.description, "ru");
 	return {
 		today: weatherInfo.datetime,
-		description: weatherInfo.description,
+		description: description,
 		night: night,
 		morning: morning,
 		day: day,

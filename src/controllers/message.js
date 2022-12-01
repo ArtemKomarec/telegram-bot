@@ -196,7 +196,7 @@ const getWeatherByLocation = async (msg, match) => {
 	rootIndex.bot.sendMessage(
 		chatId,
 		`
-Сегодня: <b>${res.today}</b>
+Сегодня: <b>${res.today}</b> в <b>${location}</b>
 Описание: ${res.description}
 Ночью: от <b>${res.night.min}</b> до <b>${res.night.max}</b>
 Утром: от <b>${res.morning.min}</b> до <b>${res.morning.max}</b>
