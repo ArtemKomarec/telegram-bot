@@ -34,3 +34,6 @@ module.exports.BLOCK_TO_FI = BLOCK_TO_FI;
 
 const WEATHER_KEY = process.env.WEATHER_API_KEY;
 module.exports.WEATHER_KEY = WEATHER_KEY;
+
+const ACTIVE_AIRDROPS = "https://airdrops.io/hot/";
+module.exports.ACTIVE_AIRDROPS = ACTIVE_AIRDROPS;

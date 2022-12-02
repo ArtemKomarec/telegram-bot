@@ -3,6 +3,7 @@ const constants = require("./constants");
 const CoinMarketCapService = require("./services/coin-market-cap");
 const TelegramBot = require("node-telegram-bot-api");
 const messageController = require("./controllers/message");
+
 // import cron from 'node-cron'
 
 const app = express();
@@ -47,7 +48,8 @@ bot.onText(/\/news/, messageController.getTopNews);
 bot.onText(/\/meme/, messageController.getMemeHandler);
 bot.onText(/\/activities/, messageController.getAllActivities);
 bot.onText(/\/global/, messageController.getGlobalCurrInfo);
-bot.onText(/\/weather_today (.+)/, messageController.getWeatherByLocation);
+bot.onText(/\/weather_today (.+)/, messageController.getWeatherToday);
+bot.onText(/\/weather_tomorrow (.+)/, messageController.getWeatherTomorrow);
 
 bot.on("new_chat_members", messageController.newChatMember);
 bot.on("left_chat_member", messageController.leftChatMember);
@@ -58,5 +60,5 @@ app.listen(constants.PORT, async () => {
 	console.log(`Server running on port ${constants.PORT}`);
 	const data = await CoinMarketCapService.getAllSlugsRequest();
 	availableСurrencies = CoinMarketCapService.getAllSlugs();
-	exports.availableСurrencies = availableСurrencies;
+	module.exports.availableСurrencies = availableСurrencies;
 });

@@ -7,6 +7,7 @@ const printFund = require("../utils");
 const news = require("../services/news");
 const activities = require("../services/activities");
 const weatherService = require("../services/weather");
+const translate = require("translate");
 
 const getJokeHandler = async (msg) => {
 	const chatId = msg.chat.id;
@@ -83,7 +84,7 @@ const convertCurrencyToUsdt = async (msg, match) => {
 	} else {
 		rootIndex.bot.sendMessage(
 			chatId,
-			`Неправильный формат сообщения. Пример: /convertToUsdt 0.05 btc`
+			`Неправильный формат сообщения. Пример: /to_usdt 0.05 btc`
 		);
 	}
 };
@@ -104,7 +105,7 @@ const convertUsdtToCurrency = async (msg, match) => {
 	} else {
 		rootIndex.bot.sendMessage(
 			chatId,
-			"Неправильный формат сообщения.\nПример: /convertToCoin 100(means usdt) btc(coin which you want)"
+			"Неправильный формат сообщения.\nПример: /to_coin 100(means usdt) btc(coin which you want)"
 		);
 	}
 };
@@ -117,12 +118,12 @@ const getGlobalCurrInfo = async (msg) => {
 	rootIndex.bot.sendMessage(
 		chatId,
 		`
-Доминация битка: ${Number(marketinfo.btcDomination).toFixed(2)}%
-Доминация эфира: ${Number(marketinfo.ethDomination).toFixed(2)}%
-Общий объем рынка сегодня: ${Number(marketinfo.totalMarketCap).toFixed(2)}$
-Объем Defi сегодня: ${Number(marketinfo.defiCap).toFixed(2)}$
-Объем Стейблов сегодня: ${Number(marketinfo.stablesCap).toFixed(2)}$
-Объем маржинальной торговли сегодня: ${Number(
+<b>Доминация битка:</b> ${Number(marketinfo.btcDomination).toFixed(2)}%
+<b>Доминация эфира:</b> ${Number(marketinfo.ethDomination).toFixed(2)}%
+<b>Объем рынка сегодня:</b> ${Number(marketinfo.totalMarketCap).toFixed(2)}$
+<b>Объем Defi сегодня:</b> ${Number(marketinfo.defiCap).toFixed(2)}$
+<b>Объем Стейблов сегодня:</b> ${Number(mar > ketinfo.stablesCap).toFixed(2)}$
+<b>Объем маржинальной торговли сегодня:</b> ${Number(
 			marketinfo.derivativesCap
 		).toFixed(2)}$
 	`
@@ -189,22 +190,58 @@ const leftChatMember = (msg) => {
 
 module.exports.leftChatMember = leftChatMember;
 
-const getWeatherByLocation = async (msg, match) => {
+const getWeatherToday = async (msg, match) => {
 	const chatId = msg.chat.id;
-	const location = match[1];
-	const res = await weatherService.getWeather(location);
-	rootIndex.bot.sendMessage(
-		chatId,
-		`
-Сегодня: <b>${res.today}</b> в <b>${location}</b>
+	let location = match[1];
+	const res = await weatherService.getWeatherDayInfo(location, true);
+	location = await translate(location, "ru");
+	if (res) {
+		rootIndex.bot.sendMessage(
+			chatId,
+			`
+Сегодня: <b>${res.today}</b> <b>${location}</b>
 Описание: ${res.description}
-Ночью: от <b>${res.night.min}</b> до <b>${res.night.max}</b>
-Утром: от <b>${res.morning.min}</b> до <b>${res.morning.max}</b>
-Днем: от <b>${res.day.min}</b> до <b>${res.day.max}</b>
-Вечером: от <b>${res.evening.min}</b> до <b>${res.evening.max}</b>
-	`,
-		{ parse_mode: "HTML" }
-	);
+Ночью: от <b>${res.night.min}&#8451;</b>  до  <b>${res.night.max}&#8451;</b>
+Утром: от <b>${res.morning.min}&#8451;</b>  до  <b>${res.morning.max}&#8451;</b>
+Днем: от <b>${res.day.min}&#8451;</b>  до  <b>${res.day.max}&#8451;</b>
+Вечером: от <b>${res.evening.min}&#8451;</b>  до  <b>${res.evening.max}&#8451;</b>
+		`,
+			{ parse_mode: "HTML" }
+		);
+	} else {
+		rootIndex.bot.sendMessage(
+			chatId,
+			"Такого города не существует. Попробуйте снова"
+		);
+	}
 };
 
-module.exports.getWeatherByLocation = getWeatherByLocation;
+module.exports.getWeatherToday = getWeatherToday;
+
+const getWeatherTomorrow = async (msg, match) => {
+	const chatId = msg.chat.id;
+	let location = match[1];
+	const res = await weatherService.getWeatherDayInfo(location, false);
+	location = await translate(location, "ru");
+	if (res) {
+		rootIndex.bot.sendMessage(
+			chatId,
+			`
+Завтра: <b>${res.today}</b> <b>${location}</b>
+Описание: ${res.description}
+Ночью: от <b>${res.night.min}&#8451;</b>  до  <b>${res.night.max}&#8451;</b>
+Утром: от <b>${res.morning.min}&#8451;</b>  до  <b>${res.morning.max}&#8451;</b>
+Днем: от <b>${res.day.min}&#8451;</b>  до  <b>${res.day.max}&#8451;</b>
+Вечером: от <b>${res.evening.min}&#8451;</b>  до  <b>${res.evening.max}&#8451;</b>
+		`,
+			{ parse_mode: "HTML" }
+		);
+	} else {
+		rootIndex.bot.sendMessage(
+			chatId,
+			"Такого города не существует. Попробуйте снова"
+		);
+	}
+};
+
+module.exports.getWeatherTomorrow = getWeatherTomorrow;
