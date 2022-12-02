@@ -32,6 +32,7 @@
 		"node-cron": "^3.0.2",
 		"node-telegram-bot-api": "^0.60.0",
 		"table": "^6.8.1",
+		"telegraf": "^4.11.2",
 		"translate": "^1.4.1"
 	}
 }
