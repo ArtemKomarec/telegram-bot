@@ -1,19 +1,19 @@
-// const express = require("express");
-// const constants = require("./constants");
-// const CoinMarketCapService = require("./services/coin-market-cap");
-// const TelegramBot = require("node-telegram-bot-api");
-// const messageController = require("./controllers/message");
+const express = require("express");
+const constants = require("./constants");
+const CoinMarketCapService = require("./services/coin-market-cap");
+const TelegramBot = require("node-telegram-bot-api");
+const messageController = require("./controllers/message");
 
 // // import cron from 'node-cron'
 
-// const app = express();
+const app = express();
 
-// app.use(
-// 	express.json(),
-// 	express.urlencoded({
-// 		extended: true,
-// 	})
-// );
+app.use(
+	express.json(),
+	express.urlencoded({
+		extended: true,
+	})
+);
 
 // // const notes = [{
 // // 	chatId: -895694621,
@@ -59,24 +59,42 @@
 // bot.on("message", messageController.newMessageHandler);
 // bot.on("polling_error", console.log);
 
-// app.listen(constants.PORT, async () => {
-// 	console.log(`Server running on port ${constants.PORT}`);
-// 	const data = await CoinMarketCapService.getAllSlugsRequest();
-// 	availableСurrencies = CoinMarketCapService.getAllSlugs();
-// 	module.exports.availableСurrencies = availableСurrencies;
-// });
 const { Telegraf } = require("telegraf");
 const dotenv = require("dotenv");
 
 dotenv.config();
 
 const bot = new Telegraf(process.env.TELEGRAM_API_TOKEN);
+bot.hears(
+	/\/joke/,
+	async (ctx) => await ctx.reply(await messageController.getJokeHandler())
+);
+
+// bot.onText(/\/fund/, messageController.getDropsTabProfileHandler);
+// bot.onText(/\/news/, messageController.getTopNews);
+// bot.onText(/\/meme/, messageController.getMemeHandler);
+// bot.onText(/\/activities/, messageController.getAllActivities);
+// bot.onText(/\/global/, messageController.getGlobalCurrInfo);
+// bot.onText(/\/weather_today (.+)/, messageController.getWeatherToday);
+// bot.onText(/\/weather_tomorrow (.+)/, messageController.getWeatherTomorrow);
+bot.on(
+	"message",
+	async (ctx) =>
+		await ctx.reply(
+			await messageController.newMessageHandler(ctx.update.message.text)
+		)
+);
+
 bot.start((ctx) => ctx.reply("Welcome"));
-bot.help((ctx) => ctx.reply("Send me a sticker"));
-bot.on("sticker", (ctx) => ctx.reply("👍"));
-bot.hears("hi", (ctx) => ctx.reply("Hey there"));
 bot.launch();
 
 // Enable graceful stop
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
+
+app.listen(constants.PORT, async () => {
+	console.log(`Server running on port ${constants.PORT}`);
+	const data = await CoinMarketCapService.getAllSlugsRequest();
+	availableСurrencies = CoinMarketCapService.getAllSlugs();
+	module.exports.availableСurrencies = availableСurrencies;
+});
