@@ -132,8 +132,8 @@ module.exports.getMemeHandler = getMemeHandler;
 
 const newMessageHandler = async (msg) => {
 	try {
-		if (typeof msg !== "undefined") {
-			const messageText = msg.toUpperCase();
+		if (typeof msg !== "undefined" && msg !== "") {
+			const messageText = msg.update.message.text.toUpperCase();
 			if (
 				rootIndex.availableСurrencies?.find(({ slug }) => slug === messageText)
 			) {
@@ -146,24 +146,22 @@ const newMessageHandler = async (msg) => {
 Цена: ${rates[0].value}
 Блокчейн: ${rates[0].blockhain}
 Изменения за 24 часа: ${rates[0].dayChange}`;
-				return responseText;
+				msg.reply(responseText);
+			} else if (messageText === "Да это бред".toUpperCase()) {
+				msg.reply("Согласен");
+			} else if (
+				messageText === "Пошел нахуй".toUpperCase() ||
+				messageText === "Пошёл нахуй".toUpperCase() ||
+				messageText === "Иди нахуй".toUpperCase()
+			) {
+				msg.reply("Сам пошел");
+			} else if (messageText === "Бля".toUpperCase()) {
+				msg.reply("Не ругайся");
 			}
 		}
 	} catch (e) {
 		console.log(e);
 	}
-
-	// else if (messageText === "Да это бред".toUpperCase()) {
-	// 	rootIndex.bot.sendMessage(msg.chat.id, "Согласен");
-	// } else if (
-	// 	messageText === "Пошел нахуй".toUpperCase() ||
-	// 	messageText === "Пошёл нахуй".toUpperCase() ||
-	// 	messageText === "Иди нахуй".toUpperCase()
-	// ) {
-	// 	rootIndex.bot.sendMessage(msg.chat.id, "Сам пошел");
-	// } else if (messageText === "Бля".toUpperCase()) {
-	// 	rootIndex.bot.sendMessage(msg.chat.id, "Не ругайся");
-	// }
 };
 
 module.exports.newMessageHandler = newMessageHandler;

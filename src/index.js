@@ -1,9 +1,12 @@
 const express = require("express");
 const constants = require("./constants");
 const CoinMarketCapService = require("./services/coin-market-cap");
-const TelegramBot = require("node-telegram-bot-api");
 const messageController = require("./controllers/message");
+const { Input } = require("telegraf");
+const { Telegraf } = require("telegraf");
+const dotenv = require("dotenv");
 
+dotenv.config();
 // // import cron from 'node-cron'
 
 const app = express();
@@ -59,15 +62,18 @@ app.use(
 // bot.on("message", messageController.newMessageHandler);
 // bot.on("polling_error", console.log);
 
-const { Telegraf } = require("telegraf");
-const dotenv = require("dotenv");
-
-dotenv.config();
-
 const bot = new Telegraf(process.env.TELEGRAM_API_TOKEN);
 bot.hears(
 	/\/joke/,
 	async (ctx) => await ctx.reply(await messageController.getJokeHandler())
+);
+
+bot.hears(
+	/\/meme/,
+	async (ctx) =>
+		await ctx.replyWithPhoto(
+			Input.fromURL(await messageController.getMemeHandler())
+		)
 );
 
 // bot.onText(/\/fund/, messageController.getDropsTabProfileHandler);
@@ -77,13 +83,7 @@ bot.hears(
 // bot.onText(/\/global/, messageController.getGlobalCurrInfo);
 // bot.onText(/\/weather_today (.+)/, messageController.getWeatherToday);
 // bot.onText(/\/weather_tomorrow (.+)/, messageController.getWeatherTomorrow);
-bot.on(
-	"message",
-	async (ctx) =>
-		await ctx.reply(
-			await messageController.newMessageHandler(ctx.update.message.text)
-		)
-);
+bot.on("text", async (ctx) => await messageController.newMessageHandler(ctx));
 
 bot.start((ctx) => ctx.reply("Welcome"));
 bot.launch();
@@ -96,5 +96,6 @@ app.listen(constants.PORT, async () => {
 	console.log(`Server running on port ${constants.PORT}`);
 	const data = await CoinMarketCapService.getAllSlugsRequest();
 	availableСurrencies = CoinMarketCapService.getAllSlugs();
+	console.log(availableСurrencies);
 	module.exports.availableСurrencies = availableСurrencies;
 });
