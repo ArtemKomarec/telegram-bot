@@ -1,10 +1,10 @@
-import express from require("express");
-import constants from require("./constants");
-import CoinMarketCapService from require("./services/coin-market-cap");
-import messageController from require("./controllers/message");
-import { Input } from require("telegraf");
-import { Telegraf } from require("telegraf");
-import dotenv from require("dotenv");
+const express = require("express");
+const constants = require("./constants");
+const CoinMarketCapService = require("./services/coin-market-cap");
+const messageController = require("./controllers/message");
+const { Input } = require("telegraf");
+const { Telegraf } = require("telegraf");
+const dotenv = require("dotenv");
 
 dotenv.config();
 // // import cron from 'node-cron'
@@ -46,7 +46,6 @@ app.use(
 // bot.on("polling_error", console.log);
 
 const bot = new Telegraf(process.env.TELEGRAM_API_TOKEN);
-export let availableСurrencies =[]
 bot.hears(
 	/\/joke/,
 	async (ctx) => await ctx.reply(await messageController.getJokeHandler())
@@ -110,5 +109,5 @@ app.listen(constants.PORT, async () => {
 	const data = await CoinMarketCapService.getAllSlugsRequest();
 	availableСurrencies = CoinMarketCapService.getAllSlugs();
 	console.log(availableСurrencies);
-	// module.exports.availableСurrencies = availableСurrencies;
+	module.exports.availableСurrencies = availableСurrencies;
 });
