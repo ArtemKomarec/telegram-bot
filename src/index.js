@@ -31,23 +31,6 @@ app.use(
 // // 	console.log('running a task every minute');
 // // });
 
-// const bot = new TelegramBot("5823108134:AAHy0ykLMcpgyV77M-rqyTty0bwzT6eBZRA", {
-// 	polling: true,
-// });
-
-// bot.re
-
-// module.exports.bot = bot;
-// let availableСurrencies = [];
-
-// bot.onText(
-// 	/\/to_usdt (?<value>.+) (?<curr>.+)/,
-// 	messageController.convertCurrencyToUsdt
-// );
-// bot.onText(
-// 	/\/to_coin (?<value>.+) (?<curr>.+)/,
-// 	messageController.convertUsdtToCurrency
-// );
 // bot.onText(/\/joke/, messageController.getJokeHandler);
 // bot.onText(/\/fund/, messageController.getDropsTabProfileHandler);
 // bot.onText(/\/news/, messageController.getTopNews);
@@ -74,6 +57,35 @@ bot.hears(
 		await ctx.replyWithPhoto(
 			Input.fromURL(await messageController.getMemeHandler())
 		)
+);
+
+bot.hears(
+	/\/to_usdt (?<value>.+) (?<curr>.+)/,
+	async (ctx) => await messageController.convertCurrencyToUsdt(ctx)
+);
+
+bot.hears(
+	/\/to_coin (?<value>.+) (?<curr>.+)/,
+	async (ctx) => await messageController.convertUsdtToCurrency(ctx)
+);
+
+bot.hears(
+	/\/fund/,
+	async (ctx) => await messageController.getDropsTabProfileHandler(ctx)
+);
+
+bot.on("new_chat_members", async (ctx) => messageController.newChatMember(ctx));
+bot.on("left_chat_member", async (ctx) =>
+	messageController.leftChatMember(ctx)
+);
+
+bot.hears(
+	/\/weather_today (?<town>.+)/,
+	async (ctx) => await messageController.getWeatherToday(ctx)
+);
+bot.hears(
+	/\/weather_tomorrow (?<town>.+)/,
+	async (ctx) => await messageController.getWeatherTomorrow(ctx)
 );
 
 // bot.onText(/\/fund/, messageController.getDropsTabProfileHandler);

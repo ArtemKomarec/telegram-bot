@@ -4,6 +4,7 @@ const randomJoke = require("../services/joke");
 const randomMeme = require("../services/memes");
 const fundBalance = require("../services/dropstab");
 const printFund = require("../utils");
+const { Input } = require("telegraf");
 const news = require("../services/news");
 const activities = require("../services/activities");
 const weatherService = require("../services/weather");
@@ -23,16 +24,15 @@ const getMemeHandler = async () => {
 
 module.exports.getMemeHandler = getMemeHandler;
 
-// const getDropsTabProfileHandler = async (msg) => {
-// 	const chatId = msg.chat.id;
-// 	const balance = await fundBalance.getDropsTabBalance();
-// 	const mess = printFund.fundInfoHandler(balance);
-// 	rootIndex.bot.sendMessage(chatId, mess, {
-// 		parse_mode: "HTML",
-// 	});
-// };
+const getDropsTabProfileHandler = async (msg) => {
+	const balance = await fundBalance.getDropsTabBalance();
+	const mess = printFund.fundInfoHandler(balance);
+	msg.reply(mess, {
+		parse_mode: "HTML",
+	});
+};
 
-// module.exports.getDropsTabProfileHandler = getDropsTabProfileHandler;
+module.exports.getDropsTabProfileHandler = getDropsTabProfileHandler;
 
 // const getAllActivities = async (msg) => {
 // 	const chatId = msg.chat.id;
@@ -68,47 +68,36 @@ module.exports.getMemeHandler = getMemeHandler;
 
 // module.exports.getTopNews = getTopNews;
 
-// const convertCurrencyToUsdt = async (msg, match) => {
-// 	const chatId = msg.chat.id;
-// 	const price = await CoinMarketCapService.getExchangeRateBySlug(
-// 		match.groups.curr
-// 	);
-// 	const convertedPrice = price * Number(match.groups.value);
-// 	if (convertedPrice) {
-// 		rootIndex.bot.sendMessage(
-// 			chatId,
-// 			`${convertedPrice.toFixed(2)}\uD83D\uDCB5`
-// 		);
-// 	} else {
-// 		rootIndex.bot.sendMessage(
-// 			chatId,
-// 			`Неправильный формат сообщения. Пример: /to_usdt 0.05 btc`
-// 		);
-// 	}
-// };
+const convertCurrencyToUsdt = async (msg) => {
+	console.log(msg.match.groups.curr);
+	const price = await CoinMarketCapService.getExchangeRateBySlug(
+		msg.match.groups.curr
+	);
+	const convertedPrice = price * Number(msg.match.groups.value);
+	if (convertedPrice) {
+		msg.reply(`${convertedPrice.toFixed(2)}\uD83D\uDCB5`);
+	} else {
+		msg.reply(`Неправильный формат сообщения. Пример: /to_usdt 0.05 btc`);
+	}
+};
 
-// module.exports.convertCurrencyToUsdt = convertCurrencyToUsdt;
+module.exports.convertCurrencyToUsdt = convertCurrencyToUsdt;
 
-// const convertUsdtToCurrency = async (msg, match) => {
-// 	const chatId = msg.chat.id;
-// 	const currency = match.groups.curr;
-// 	const price = await CoinMarketCapService.getExchangeRateBySlug(currency);
-// 	const coinQuaintity = Number(match.groups.value) / price;
+const convertUsdtToCurrency = async (msg) => {
+	const currency = msg.match.groups.curr;
+	const price = await CoinMarketCapService.getExchangeRateBySlug(currency);
+	const coinQuaintity = Number(msg.match.groups.value) / price;
 
-// 	if (coinQuaintity) {
-// 		rootIndex.bot.sendMessage(
-// 			chatId,
-// 			`${coinQuaintity.toFixed(8) + " " + currency.toUpperCase()}`
-// 		);
-// 	} else {
-// 		rootIndex.bot.sendMessage(
-// 			chatId,
-// 			"Неправильный формат сообщения.\nПример: /to_coin 100(means usdt) btc(coin which you want)"
-// 		);
-// 	}
-// };
+	if (coinQuaintity) {
+		msg.reply(`${coinQuaintity.toFixed(8) + " " + currency.toUpperCase()}`);
+	} else {
+		msg.reply(
+			"Неправильный формат сообщения.\nПример: /to_coin 100(means usdt) btc(coin which you want)"
+		);
+	}
+};
 
-// module.exports.convertUsdtToCurrency = convertUsdtToCurrency;
+module.exports.convertUsdtToCurrency = convertUsdtToCurrency;
 
 // const getGlobalCurrInfo = async (msg) => {
 // 	const chatId = msg.chat.id;
@@ -166,81 +155,69 @@ const newMessageHandler = async (msg) => {
 
 module.exports.newMessageHandler = newMessageHandler;
 
-// const newChatMember = (msg) => {
-// 	const chatId = msg.chat.id;
-// 	rootIndex.bot.sendPhoto(
-// 		chatId,
-// 		"https://avatars.mds.yandex.net/get-images-cbir/516543/hWbMF_mtRBHJcXd17iP-5A4300/ocr",
-// 		{
-// 			caption: `Добро пожаловать, ${msg.new_chat_member.first_name}. Запомни эти простые правила`,
-// 		}
-// 	);
-// };
+const newChatMember = (msg) => {
+	msg.replyWithPhoto(
+		Input.fromURL(
+			"https://avatars.mds.yandex.net/get-images-cbir/516543/hWbMF_mtRBHJcXd17iP-5A4300/ocr"
+		),
+		{
+			caption: `Добро пожаловать, ${msg.message.new_chat_member.first_name}. Запомни эти простые правила`,
+		}
+	);
+};
 
-// module.exports.newChatMember = newChatMember;
+module.exports.newChatMember = newChatMember;
 
-// const leftChatMember = (msg) => {
-// 	const chatId = msg.chat.id;
-// 	rootIndex.bot.sendMessage(
-// 		chatId,
-// 		`Давай, ${msg.left_chat_participant.first_name}, до свидания`
-// 	);
-// };
+const leftChatMember = (msg) => {
+	msg.reply(
+		`Давай, ${msg.message.left_chat_participant.first_name}, до свидания`
+	);
+};
 
-// module.exports.leftChatMember = leftChatMember;
+module.exports.leftChatMember = leftChatMember;
 
-// const getWeatherToday = async (msg, match) => {
-// 	const chatId = msg.chat.id;
-// 	let location = match[1];
-// 	const res = await weatherService.getWeatherDayInfo(location, true);
-// 	location = await translate(location, "ru");
-// 	if (res) {
-// 		rootIndex.bot.sendMessage(
-// 			chatId,
-// 			`
-// Сегодня: <b>${res.today}</b> <b>${location}</b>
-// Описание: ${res.description}
-// Ночью: от <b>${res.night.min}&#8451;</b>  до  <b>${res.night.max}&#8451;</b>
-// Утром: от <b>${res.morning.min}&#8451;</b>  до  <b>${res.morning.max}&#8451;</b>
-// Днем: от <b>${res.day.min}&#8451;</b>  до  <b>${res.day.max}&#8451;</b>
-// Вечером: от <b>${res.evening.min}&#8451;</b>  до  <b>${res.evening.max}&#8451;</b>
-// 		`,
-// 			{ parse_mode: "HTML" }
-// 		);
-// 	} else {
-// 		rootIndex.bot.sendMessage(
-// 			chatId,
-// 			"Такого города не существует. Попробуйте снова"
-// 		);
-// 	}
-// };
+const getWeatherToday = async (msg) => {
+	let location = msg.match.groups.town;
+	const res = await weatherService.getWeatherDayInfo(location, true);
+	location = await translate(location, "ru");
+	if (res) {
+		msg.reply(
+			`
+Сегодня: <b>${res.today}</b> <b>${location}</b>
+Описание: ${res.description}
+Ночью: от <b>${res.night.min}&#8451;</b>  до  <b>${res.night.max}&#8451;</b>
+Утром: от <b>${res.morning.min}&#8451;</b>  до  <b>${res.morning.max}&#8451;</b>
+Днем: от <b>${res.day.min}&#8451;</b>  до  <b>${res.day.max}&#8451;</b>
+Вечером: от <b>${res.evening.min}&#8451;</b>  до  <b>${res.evening.max}&#8451;</b>
+		`,
+			{ parse_mode: "HTML" }
+		);
+	} else {
+		msg.reply("Такого города не существует. Попробуйте снова");
+	}
+};
 
-// module.exports.getWeatherToday = getWeatherToday;
+module.exports.getWeatherToday = getWeatherToday;
 
-// const getWeatherTomorrow = async (msg, match) => {
-// 	const chatId = msg.chat.id;
-// 	let location = match[1];
-// 	const res = await weatherService.getWeatherDayInfo(location, false);
-// 	location = await translate(location, "ru");
-// 	if (res) {
-// 		rootIndex.bot.sendMessage(
-// 			chatId,
-// 			`
-// Завтра: <b>${res.today}</b> <b>${location}</b>
-// Описание: ${res.description}
-// Ночью: от <b>${res.night.min}&#8451;</b>  до  <b>${res.night.max}&#8451;</b>
-// Утром: от <b>${res.morning.min}&#8451;</b>  до  <b>${res.morning.max}&#8451;</b>
-// Днем: от <b>${res.day.min}&#8451;</b>  до  <b>${res.day.max}&#8451;</b>
-// Вечером: от <b>${res.evening.min}&#8451;</b>  до  <b>${res.evening.max}&#8451;</b>
-// 		`,
-// 			{ parse_mode: "HTML" }
-// 		);
-// 	} else {
-// 		rootIndex.bot.sendMessage(
-// 			chatId,
-// 			"Такого города не существует. Попробуйте снова"
-// 		);
-// 	}
-// };
+const getWeatherTomorrow = async (msg) => {
+	let location = msg.match.groups.town;
+	const res = await weatherService.getWeatherDayInfo(location, false);
+	location = await translate(location, "ru");
+	if (res) {
+		msg.reply(
+			`
+Завтра: <b>${res.today}</b> <b>${location}</b>
+Описание: ${res.description}
+Ночью: от <b>${res.night.min}&#8451;</b>  до  <b>${res.night.max}&#8451;</b>
+Утром: от <b>${res.morning.min}&#8451;</b>  до  <b>${res.morning.max}&#8451;</b>
+Днем: от <b>${res.day.min}&#8451;</b>  до  <b>${res.day.max}&#8451;</b>
+Вечером: от <b>${res.evening.min}&#8451;</b>  до  <b>${res.evening.max}&#8451;</b>
+		`,
+			{ parse_mode: "HTML" }
+		);
+	} else {
+		msg.reply("Такого города не существует. Попробуйте снова");
+	}
+};
 
-// module.exports.getWeatherTomorrow = getWeatherTomorrow;
+module.exports.getWeatherTomorrow = getWeatherTomorrow;
