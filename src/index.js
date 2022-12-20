@@ -95,7 +95,10 @@ bot.hears(
 // bot.onText(/\/global/, messageController.getGlobalCurrInfo);
 // bot.onText(/\/weather_today (.+)/, messageController.getWeatherToday);
 // bot.onText(/\/weather_tomorrow (.+)/, messageController.getWeatherTomorrow);
-bot.on("text", async (ctx) => await messageController.newMessageHandler(ctx));
+bot.on(
+	"message",
+	async (ctx) => await messageController.newMessageHandler(ctx)
+);
 
 bot.start((ctx) => ctx.reply("Welcome"));
 bot.launch();

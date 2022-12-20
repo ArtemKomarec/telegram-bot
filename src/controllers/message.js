@@ -122,30 +122,35 @@ module.exports.convertUsdtToCurrency = convertUsdtToCurrency;
 const newMessageHandler = async (msg) => {
 	try {
 		if (typeof msg !== "undefined" && msg !== "") {
-			const messageText = msg.update.message.text.toUpperCase();
-			if (
-				rootIndex.availableСurrencies?.find(({ slug }) => slug === messageText)
-			) {
-				const rates = await CoinMarketCapService.getExchangeRatesBySlugs([
-					messageText,
-				]);
-				console.log(rates);
-				const responseText = `
-Название: ${rates[0].currency}
-Цена: ${rates[0].value}
-Блокчейн: ${rates[0].blockhain}
-Изменения за 24 часа: ${rates[0].dayChange}`;
-				msg.reply(responseText);
-			} else if (messageText === "Да это бред".toUpperCase()) {
-				msg.reply("Согласен");
-			} else if (
-				messageText === "Пошел нахуй".toUpperCase() ||
-				messageText === "Пошёл нахуй".toUpperCase() ||
-				messageText === "Иди нахуй".toUpperCase()
-			) {
-				msg.reply("Сам пошел");
-			} else if (messageText === "Бля".toUpperCase()) {
-				msg.reply("Не ругайся");
+			if (msg.update.message.forward_from_chat["title"]) {
+				msg.reply("Опять политика 🤮");
+			} else {
+				const messageText = msg.update.message.text.toUpperCase();
+				if (
+					rootIndex.availableСurrencies?.find(
+						({ slug }) => slug === messageText
+					)
+				) {
+					const rates = await CoinMarketCapService.getExchangeRatesBySlugs([
+						messageText,
+					]);
+					const responseText = `
+	Название: ${rates[0].currency}
+	Цена: ${rates[0].value}
+	Блокчейн: ${rates[0].blockhain}
+	Изменения за 24 часа: ${rates[0].dayChange}`;
+					msg.reply(responseText);
+				} else if (messageText === "Да это бред".toUpperCase()) {
+					msg.reply("Согласен");
+				} else if (
+					messageText === "Пошел нахуй".toUpperCase() ||
+					messageText === "Пошёл нахуй".toUpperCase() ||
+					messageText === "Иди нахуй".toUpperCase()
+				) {
+					msg.reply("Сам пошел");
+				} else if (messageText === "Бля".toUpperCase()) {
+					msg.reply("Не ругайся");
+				}
 			}
 		}
 	} catch (e) {
